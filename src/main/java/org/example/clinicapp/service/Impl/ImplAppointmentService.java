@@ -8,6 +8,7 @@ import org.example.clinicapp.entity.User;
 import org.example.clinicapp.repository.AppointmentRepository;
 import org.example.clinicapp.repository.UserRepository;
 import org.example.clinicapp.service.AppointmentService;
+import org.example.clinicapp.service.MailSenderService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class ImplAppointmentService implements AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
     private final UserRepository userRepository;
+    private final MailSenderService mailSenderService;
 
     @Override
     public List<PatientDto> getPatientsByDoctor(Long doctorId) {
@@ -75,12 +77,22 @@ public class ImplAppointmentService implements AppointmentService {
         User doctor = userRepository.findById(request.getDoctorId())
                 .orElseThrow(() -> new RuntimeException("Доктор не найден"));
 
+        mailSenderService.sendMessage(EmailMessage.builder()
+                .text("К вам записался новый клиент" + patient.getFullName())
+                .address(doctor.getEmail())
+                .build());
+        mailSenderService.sendMessage(EmailMessage.builder()
+                .text("Вы записались на прием к врачу " + doctor.getFullName())
+                .address(patient.getEmail())
+                .build());
         LocalDateTime dateTime = LocalDateTime.of(request.getDate(), request.getTime());
 
         Appointment appointment = new Appointment();
         appointment.setPatient(patient);
         appointment.setDoctor(doctor);
         appointment.setDateAppointment(dateTime);
+
+
 
         appointmentRepository.save(appointment);
     }
