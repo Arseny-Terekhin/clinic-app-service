@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.example.clinicapp.dto.AppointmentDto;
 import org.example.clinicapp.dto.CreateAppointmentRequest;
 import org.example.clinicapp.dto.DoctorDto;
+import org.example.clinicapp.dto.EmailMessage;
 import org.example.clinicapp.service.AppointmentService;
+import org.example.clinicapp.service.MailSenderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +19,7 @@ import java.util.Map;
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
+    private final MailSenderService mailSenderService;
 
     @GetMapping("/my/{userId}")
     public ResponseEntity<List<AppointmentDto>> getMyAppointments(@PathVariable Long userId) {
@@ -34,4 +37,5 @@ public class AppointmentController {
         appointmentService.createAppointment(patientId, request);
         return ResponseEntity.ok(Map.of("message", "Запись создана"));
     }
+
 }

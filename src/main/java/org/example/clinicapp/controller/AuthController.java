@@ -3,8 +3,10 @@ package org.example.clinicapp.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.clinicapp.dto.AuthRequest;
+import org.example.clinicapp.dto.EmailMessage;
 import org.example.clinicapp.dto.RegistrationRequest;
 import org.example.clinicapp.entity.User;
+import org.example.clinicapp.service.MailSenderService;
 import org.example.clinicapp.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,10 +26,15 @@ public class AuthController {
 
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
+    private final MailSenderService mailSenderService;
 
     @PostMapping("/regist")
     public ResponseEntity<?> register(@RequestBody @Valid RegistrationRequest registrationRequest) {
         User user = userService.register(registrationRequest);
+        mailSenderService.sendMessage(EmailMessage.builder()
+                .text("Вы цспешно зарегистрировались")
+                        .address(user.getEmail())
+                .build());
         return ResponseEntity.ok(Map.of(
                 "message", "Пользователь зарегистрирован",
                 "username", user.getEmail()
