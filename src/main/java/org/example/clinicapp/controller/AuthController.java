@@ -32,7 +32,7 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody @Valid RegistrationRequest registrationRequest) {
         User user = userService.register(registrationRequest);
         mailSenderService.sendMessage(EmailMessage.builder()
-                .text("Вы цспешно зарегистрировались")
+                .text("Вы успешно зарегистрировались")
                         .address(user.getEmail())
                 .build());
         return ResponseEntity.ok(Map.of(

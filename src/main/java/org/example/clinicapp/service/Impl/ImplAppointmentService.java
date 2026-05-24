@@ -93,7 +93,6 @@ public class ImplAppointmentService implements AppointmentService {
         appointment.setDateAppointment(dateTime);
 
 
-
         appointmentRepository.save(appointment);
     }
 }
